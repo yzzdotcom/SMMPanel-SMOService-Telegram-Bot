@@ -1,32 +1,25 @@
-# Use official Python image
+# Use an official Python image
 FROM python:3.11-slim
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Set work directory
+# Set working directory
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libffi-dev \
-    libssl-dev \
-    git \
-    curl \
-    && apt-get clean
+RUN apt-get update && apt-get install -y gcc
 
 # Install Python dependencies
-COPY requirements.txt /app/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project files
-COPY . /app/
+COPY . .
 
-# Expose the port your bot will run on
+# Expose the port your bot runs on (example: 8080)
 EXPOSE 8080
 
-# Default command to run your bot
+# Run the bot
 CMD ["python", "main.py"]
