@@ -1,31 +1,32 @@
-# Use a lightweight Python image
-FROM python:3.10-slim
+# Use official Python image
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies required by aiohttp and other packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    libffi-dev \
-    gcc \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set working directory
+# Set work directory
 WORKDIR /app
 
-# Copy project files
-COPY . .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+    git \
+    curl \
+    && apt-get clean
 
-# Upgrade pip and install Python dependencies
+# Install Python dependencies
+COPY requirements.txt /app/
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Expose the port your bot might use (optional)
-EXPOSE 8000
+# Copy project files
+COPY . /app/
 
-# Start your bot (adjust this line if your main file is different)
+# Expose the port your bot will run on
+EXPOSE 8080
+
+# Default command to run your bot
 CMD ["python", "main.py"]
